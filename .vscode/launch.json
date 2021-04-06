@@ -10,6 +10,13 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/first_lessons"
+        },
+        {
+            "name": "Run second lesson",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/second_lessons"
         }
     ]
 }
