@@ -1,0 +1,27 @@
+{{ define "header" }}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Main page</title>
+        <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+        <link href="/static/cover.css" rel="stylesheet">
+    </head>
+
+    <body class="d-flex h-100 text-center bg-dark text-white">
+        <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+            <header class="mb-auto">
+                <div>
+                    <h3 class="float-md-left mb-0">Project</h3>
+                    <nav class="nav nav-masthead justify-content-center float-md-right">
+                        <a class="nav-link font-weight-bold py-1 px-0 active" aria-current="page" href="/">Home</a>
+                        <a class="nav-link font-weight-bold py-1 px-0" href="#">Features</a>
+                        <a class="nav-link font-weight-bold py-1 px-0" href="/contacts/">Contact</a>
+                        <a class="nav-link font-weight-bold py-1 px-0" href="/create">Create Article</a>
+                    </nav>
+                </div>
+            </header>
+{{ end }}
