@@ -6,6 +6,8 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/gorilla/mux"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -15,6 +17,7 @@ type Article struct {
 }
 
 var posts = []Article{}
+var showPost = Article{}
 
 func index(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("templates/index.html", "templates/header.html", "templates/footer.html")
@@ -82,12 +85,49 @@ func save_article(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func show_post(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	w.WriteHeader(http.StatusOK)
+
+	tmpl, err := template.ParseFiles("templates/show.html", "templates/header.html", "templates/footer.html")
+
+	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:8889)/golangdb")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+
+	res, err := db.Query(fmt.Sprintf("SELECT * FROM `articles` WHERE `id` = %s", vars["id"]))
+	if err != nil {
+		panic(err.Error())
+	}
+
+	showPost = Article{}
+	for res.Next() {
+		var article Article
+		err = res.Scan(&article.Id, &article.Title, &article.Anons, &article.FullText)
+		if err != nil {
+			panic(err.Error())
+		}
+
+		showPost = article
+	}
+
+	defer res.Close()
+
+	tmpl.ExecuteTemplate(w, "show", showPost)
+}
+
 func handleFunc() {
+	r := mux.NewRouter()
+	r.HandleFunc("/", index).Methods("GET")
+	r.HandleFunc("/create", create).Methods("GET")
+	r.HandleFunc("/save_article", save_article).Methods("POST")
+	r.HandleFunc("/post/{id:[0-9]+}", show_post).Methods("GET")
+
+	http.Handle("/", r)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-	http.HandleFunc("/", index)
-	http.HandleFunc("/create", create)
-	http.HandleFunc("/save_article", save_article)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8080", r)
 }
 
 func main() {
